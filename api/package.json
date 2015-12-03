@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "lodash": "~1.2.0",
-    "apiaxle-base": "1.12.35",
+    "apiaxle-base": "http://s3.amazonaws.com/mapzen.software/apiaxle-base-1.12.35.tgz",
     "libxmljs": "~0.7.1",
     "moment": "~2.0.0",
     "scarf": "0.0.10",
