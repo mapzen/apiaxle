@@ -99,24 +99,24 @@ class exports.AllKeyStats extends StatsController
 
       statsModel = @app.model "stats"
 
+      types = [ "uncached", "cached", "error" ]
+
       keyFns = []
+      apiKeysResult = {}
       for key in keys
         do( key ) =>
           keyFns.push ( cb ) =>
-            types = [ "uncached", "cached", "error" ]
-            queryType = ( type, cb ) =>
-              redis_key = ['key', key, type]
-              statsModel.getAll redis_key, granularity, from, to, (err, results) =>
-                return err if err
-                result = {}
-                result[type] = results
-                cb null, result
-            async.map types, queryType, ( err, results ) =>
+            queryTypeFns = {}
+            for type in types
+              do( type ) =>
+                queryTypeFns[type] = ( cb ) =>
+                  redis_key = ['key', key, type]
+                  statsModel.getAll redis_key, granularity, from, to, cb
+            async.parallel queryTypeFns, ( err, timestampData ) =>
               return err if err
-              result = {}
-              result[key] = results
-              cb null, result
+              apiKeysResult[key] = timestampData
+              cb null
 
-      return async.series keyFns, ( err, results ) =>
+      return async.series keyFns, ( err ) =>
         return next err if err
-        return @json res, results
+        return @json res, apiKeysResult
