@@ -12,7 +12,7 @@
   ],
   "description": "ApiAxle's commandline interface.",
   "bugs": "https://github.com/apiaxle/apiaxle/issues",
-  "version": "1.12.35",
+  "version": "1.12.36",
   "scripts": {
     "test": "cake test"
   },
