@@ -2,7 +2,7 @@
 # Copyright 2011-2013 Philip Jackson.
 async = require "async"
 
-{ QpsExceededError, QpdExceededError } = require "../../../lib/error"
+{ QpsExceededError, QpmExceededError, QpdExceededError } = require "../../../lib/error"
 { Redis } = require "../redis"
 
 class exports.ApiLimits extends Redis
@@ -10,12 +10,15 @@ class exports.ApiLimits extends Redis
   @smallKeyName = "al"
 
   @qpdExpires = 86400
+  @qpmExpires = 60
   @qpsExpires = 1
 
   qpsKey: ( key ) ->
     seconds = Math.floor( Date.now() / 1000 )
-
     return [ "qps", seconds, key ]
+
+  qpmKey: ( key ) ->
+    return [ "qpm", @minuteString(), key ]
 
   qpdKey: ( key ) ->
     return [ "qpd", @dayString(), key ]
@@ -25,22 +28,30 @@ class exports.ApiLimits extends Redis
       return cb err if err
       return cb null, qp
 
-  apiHit: ( key, qpsLimit, qpdLimit, cb ) ->
-    both = []
+  apiHit: ( key, qpsLimit, qpmLimit, qpdLimit, cb ) ->
+    all = []
 
     if qpdLimit? and qpdLimit > 0
-      both.push ( innerCb ) =>
+      all.push ( innerCb ) =>
         @qpdHit key, qpdLimit, innerCb
 
+    if qpmLimit? and qpmLimit > 0
+      all.push ( innerCb ) =>
+        @qpmHit key, qpmLimit, innerCb
+
     if qpsLimit? and qpsLimit > 0
-      both.push ( innerCb ) =>
+      all.push ( innerCb ) =>
         @qpsHit key, qpsLimit, innerCb
 
-    async.series both, cb
+    async.series all, cb
 
   qpdHit: ( key, qpdLimit, cb ) ->
     qpdKey = @qpdKey( key )
     @qpHit qpdKey, @constructor.qpdExpires, qpdLimit, QpdExceededError, cb
+
+  qpmHit: ( key, qpmLimit, cb ) ->
+    qpmKey = @qpmKey( key )
+    @qpHit qpmKey, @constructor.qpmExpires, qpmLimit, QpmExceededError, cb
 
   qpsHit: ( key, qpsLimit, cb ) ->
     qpsKey = @qpsKey( key )

@@ -117,6 +117,7 @@ class exports.CatchallTest extends ApiaxleTest
       key:
         phil:
           qps: 20
+          qpm: 25
           qpd: 30
           forApis: [ "programmes", "facebook", "twitter" ]
 
@@ -305,6 +306,7 @@ class exports.CatchallTest extends ApiaxleTest
           @equal response.contentType, "application/json"
 
           @ok response.headers[ "x-apiaxleproxy-qps-left" ]
+          @ok response.headers[ "x-apiaxleproxy-qpm-left" ]
           @ok response.headers[ "x-apiaxleproxy-qpd-left" ]
 
           response.parseJson ( err, json ) =>

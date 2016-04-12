@@ -130,8 +130,8 @@ class exports.ApiaxleProxy extends AxleApp
       create_link = [
         # create the key
         ( cb ) ->
-          { keylessQps, keylessQpd } = req.api.data
-          model.create key_name, { qps: keylessQps, qpd: keylessQpd }, cb
+          { keylessQps, keylessQpm, keylessQpd } = req.api.data
+          model.create key_name, { qps: keylessQps, qpm: keylessQpm, qpd: keylessQpd }, cb
 
         # now link the key
         ( cb ) -> req.api.linkKey key_name, cb
@@ -296,14 +296,16 @@ class exports.ApiaxleProxy extends AxleApp
     args = [
       req.key.id
       req.key.data.qps
+      req.key.data.qpm
       req.key.data.qpd
     ]
 
-    @model( "apilimits" ).apiHit args..., ( err, [ newQpd, newQps ] ) ->
+    @model( "apilimits" ).apiHit args..., ( err, [ newQpd, newQpm, newQps ] ) ->
       return next err if err
 
       # let the user know what they have left
       res.setHeader "X-ApiaxleProxy-Qps-Left", newQps
+      res.setHeader "X-ApiaxleProxy-Qpm-Left", newQpm
       res.setHeader "X-ApiaxleProxy-Qpd-Left", newQpd
 
       return next()
@@ -378,7 +380,7 @@ class exports.ApiaxleProxy extends AxleApp
       res.setHeader "Access-Control-Allow-Credentials", "true"
       res.setHeader "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD"
       res.setHeader "Access-Control-Allow-Headers", "Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token"
-      res.setHeader "Access-Control-Expose-Headers", "content-type, content-length, X-ApiaxleProxy-Qps-Left, X-ApiaxleProxy-Qpd-Left"
+      res.setHeader "Access-Control-Expose-Headers", "content-type, content-length, X-ApiaxleProxy-Qps-Left, X-ApiaxleProxy-Qpm-Left, X-ApiaxleProxy-Qpd-Left"
 
     return next()
 
