@@ -19,16 +19,16 @@
     "apiaxle-api": "./apiaxle-api.js"
   },
   "dependencies": {
-    "lodash": "~1.2.0",
     "apiaxle-base": "http://s3.amazonaws.com/mapzen.software/apiaxle-base-1.12.35.tgz",
-    "libxmljs": "~0.7.1",
+    "async": "~0.2.9",
+    "express": "~3.2.5",
+    "libxmljs": "~0.14.0",
+    "lodash": "~1.2.0",
     "moment": "~2.0.0",
+    "optimist": "~0.5.2",
     "scarf": "0.0.10",
     "sinon": "~1.6.0",
-    "twerp": "~1.0.7",
-    "express": "~3.2.5",
-    "optimist": "~0.5.2",
-    "async": "~0.2.9"
+    "twerp": "~1.0.7"
   },
   "devDependencies": {
     "coffee-script": "~1.6.2"
