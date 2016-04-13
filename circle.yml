@@ -5,7 +5,12 @@ machine:
     - redis
 
 dependencies:
-  pre:
+  cache_directories:
+    - base/node_modules
+    - api/node_modules
+    - proxy/node_modules
+    - repl/node_modules
+  override:
     - npm install -g coffee-script twerp
     - make link
     - make npminstall
