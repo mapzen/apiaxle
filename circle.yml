@@ -14,7 +14,7 @@ dependencies:
 test:
   override:
     - make test:
-        timeout: 300
+        timeout: 120
 
 deployment:
   release:
