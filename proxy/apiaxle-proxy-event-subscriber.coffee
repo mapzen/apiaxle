@@ -19,12 +19,13 @@ class exports.ApiaxleQueueProcessor extends AxleApp
     super @options
     @path_globs = new PathGlobs()
 
-  loadExternalProcessors: ( paths, cb ) ->
+  loadExternalProcessors: ( cb ) ->
     try
-      @hitProcessors = paths.map( (processorPath) ->
-        processor = new (require(processorPath))()
+      @hitProcessors = @config.traffic_processors.map( (processor_config) ->
+        processor = new (require(processor_config.path))(processor_config.args)
         return processor.processHit.bind(processor) )
-      @logger.debug("Loaded external processors: #{paths}") if @hitProcessors.length > 0
+      if @config.traffic_processors.length > 0
+        @logger.debug("Loaded #{@config.traffic_processors.length} external processors")
       @hitProcessors.push(@processHit.bind(this));
       return cb null
     catch err
@@ -39,6 +40,8 @@ class exports.ApiaxleQueueProcessor extends AxleApp
       timing,
       is_keyless,
       parsed_url } = options
+
+
 
     # nothing we can really do here other than log
     return cb error if error and not api_name
@@ -145,20 +148,9 @@ if not module.parent
       alias: "disable-timings"
       default: false
       describe: "Disable timing processing."
-    e:
-      alias: "external-processor"
-      describe: "requireable path which exports a javascript class with a processHit method"
 
   optimism.boolean "help"
   optimism.describe "help", "Show this help screen"
-
-  # make sure externalProcessors is always an array
-  if !optimism.argv["external-processor"]
-    externalProcessors = []
-  else if typeof optimism.argv["external-processor"] == "string"
-    externalProcessors = [optimism.argv["external-processor"]]
-  else
-    externalProcessors = optimism.argv["external-processor"]
 
   if optimism.argv.help or optimism.argv._.length > 0
     optimism.showHelp()
@@ -181,7 +173,7 @@ if not module.parent
     all.push ( cb ) -> api.redisConnect "redisClient", cb
     all.push ( cb ) -> api.redisConnect "redisSubscribeClient", cb
     all.push ( cb ) -> api.loadAndInstansiatePlugins cb
-    all.push ( cb ) -> api.loadExternalProcessors externalProcessors, cb
+    all.push ( cb ) -> api.loadExternalProcessors cb
     all.push ( cb ) -> api.run cb
 
     async.series all, ( err ) ->

@@ -1,6 +1,10 @@
 changelog
 =========
 
+1.12.38
+-------
+move traffic processor config to apiaxle json file
+
 1.12.37
 -------
 update dependencies so it will install with node 0.12+
