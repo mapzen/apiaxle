@@ -156,11 +156,29 @@ class exports.AxleApp extends Application
               type: "object"
               additionalProperties: true
 
+  getHitsProcessorsSchema: ->
+    {}=
+      type: "object"
+      additionalProperties: false
+      properties:
+        hits_processors:
+          type: "array"
+          items:
+            type: "object"
+            additionalProperties: false
+            properties:
+              path:
+                type: "string"
+              args:
+                type: "object"
+                additionalProperties: true
+
   getConfigurationSchema: ->
     _.merge @getAppConfigSchema(),
             @getLoggingConfigSchema(),
             @getApiaxleConfigSchema(),
-            @getRoutingSchema()
+            @getRoutingSchema(),
+            @getHitsProcessorsSchema()
 
   controller: ( name ) ->
     return @plugins.controllers[name]

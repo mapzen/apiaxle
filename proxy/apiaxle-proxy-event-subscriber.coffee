@@ -19,6 +19,18 @@ class exports.ApiaxleQueueProcessor extends AxleApp
     super @options
     @path_globs = new PathGlobs()
 
+  loadExternalProcessors: ( cb ) ->
+    try
+      @hitProcessors = @config.hits_processors.map( (processor_config) ->
+        processor = new (require(processor_config.path))(processor_config.args)
+        return processor.processHit.bind(processor) )
+      if @config.hits_processors.length > 0
+        @logger.debug("Loaded #{@config.hits_processors.length} external processors")
+      @hitProcessors.push(@processHit.bind(this));
+      return cb null
+    catch err
+      return cb err
+
   processHit: ( options, cb ) ->
     { error,
       status_code,
@@ -110,7 +122,16 @@ class exports.ApiaxleQueueProcessor extends AxleApp
 
     p = =>
       queue.brpop "queue", 2000, ( err, message ) =>
-        @processHit JSON.parse( message[1] ), =>
+        parsedMessage = JSON.parse( message[1] )
+        # swallow any errors a processor throws or returns in the callback
+        # so they don't block the rest from running
+        runProcessor = (f,cb) ->
+          try
+            f(parsedMessage, -> cb(null))
+          catch
+            console.log('caught bad processor')
+            cb(null)
+        async.each @hitProcessors, runProcessor, =>
           setTimeout p, 1
 
     p()
@@ -150,6 +171,7 @@ if not module.parent
     all.push ( cb ) -> api.redisConnect "redisClient", cb
     all.push ( cb ) -> api.redisConnect "redisSubscribeClient", cb
     all.push ( cb ) -> api.loadAndInstansiatePlugins cb
+    all.push ( cb ) -> api.loadExternalProcessors cb
     all.push ( cb ) -> api.run cb
 
     async.series all, ( err ) ->
