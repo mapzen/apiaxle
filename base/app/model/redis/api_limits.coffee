@@ -28,6 +28,23 @@ class exports.ApiLimits extends Redis
       return cb err if err
       return cb null, qp
 
+  qpCheck: ( key, qp, cb ) ->
+    if qp == 'qpd'
+      qpKey = @qpdKey( key )
+    else if qp == 'qpm'
+      qpKey = @qpmKey( key )
+    else if qp == 'qps'
+      qpKey = @qpsKey( key )
+    else
+      cb new Error 'unknown limit type'
+
+    @get qpKey, ( err, limitUsed ) =>
+      return cb err if err
+      return cb null, 0, 0 if limitUsed == null
+      @ttl qpKey, ( err, ttl ) =>
+        return cb err if err
+        return cb null, limitUsed, ttl
+
   apiHit: ( key, qpsLimit, qpmLimit, qpdLimit, cb ) ->
     all = []
 

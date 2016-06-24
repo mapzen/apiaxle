@@ -93,6 +93,41 @@ class exports.CreateKey extends ApiaxleController
       return next err if err
       return @json res, newObj.data
 
+class exports.ViewKeyLimits extends ApiaxleController
+  @verb = "get"
+
+  desc: -> "Get how close a key is to a particular limit."
+
+  docs: ->
+    {}=
+      verb: "GET"
+      title: "Get how close a key is to a particular limit."
+      response: "The key limits object."
+
+  middleware: -> [ @mwValidateQueryParams(),
+                   @mwKeyDetails( valid_key_required=true ) ]
+
+  path: -> "/v1/key/:key/limit/:limit"
+
+  execute: ( req, res, next ) ->
+    if !(req.params.limit == 'qpd' ||
+         req.params.limit == 'qpm' ||
+         req.params.limit == 'qps')
+      return new Error 'unknown limit type'
+
+    req.key.supportedApis ( err, apis ) =>
+      return err if err
+
+      @app.model( "apilimits" ).qpCheck req.key.id, req.params.limit, ( err, limitUsed, ttl ) =>
+        return err if err
+        limits =
+          limit: req.key.data[req.params.limit],
+          remaining: req.key.data[req.params.limit] - limitUsed,
+          reset: Math.floor(new Date()/1000) + ttl
+        result = {}
+        apis.forEach ( api ) -> result[api] = limits
+        return @json res, result
+
 class exports.ViewKey extends ApiaxleController
   @verb = "get"
 

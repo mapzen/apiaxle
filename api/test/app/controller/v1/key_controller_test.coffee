@@ -249,6 +249,29 @@ class exports.KeyControllerTest extends ApiaxleTest
 
           done 33
 
+  "test get key limit": ( done ) ->
+    @fixtures.createKey "1234", forApis: [ "twitter", "facebook" ], ( err, newKey ) =>
+      model = @app.model "apilimits"
+
+      model.apiHit "1234", 1, 1, 1, ( err, res ) =>
+        @GET path: "/v1/key/1234/limit/qpd", ( err, res ) =>
+          @ok not err
+
+          res.parseJsonSuccess ( err, meta, results ) =>
+            @ok not err
+
+            @ok results.twitter
+            @equal results.twitter.limit, results.twitter.remaining + 1
+            # reset should be 1 day in the future +- rounding errors
+            @ok Math.abs(results.twitter.reset - 60*60*24 - Math.floor(Date.now()/1000)) <= 1
+
+            @ok results.facebook
+            @equal results.facebook.limit, results.facebook.remaining + 1
+            # reset should be 1 day in the future +- rounding errors
+            @ok Math.abs(results.facebook.reset - 60*60*24 - Math.floor(Date.now()/1000)) <= 1
+
+            done 8
+
 class exports.KeyStatsTest extends ApiaxleTest
   @start_webserver = true
   @empty_db_on_setup = true

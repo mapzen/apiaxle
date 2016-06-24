@@ -113,3 +113,36 @@ class exports.QpdTest extends FakeAppTest
       @equal limits.length, 3
 
       done 2
+
+  "test qpCheck returns limit used, ttl": ( done ) ->
+    model = @app.model "apilimits"
+
+    # we need to stub the keys because there's a chance we'll tick
+    # over to the next second/day
+    qpsKeyStub = @getStub ApiLimits::, "qpsKey", -> "qpsTestKey"
+    qpmKeyStub = @getStub ApiLimits::, "qpmKey", -> "qpmTestKey"
+    qpdKeyStub = @getStub ApiLimits::, "qpdKey", -> "qpdTestKey"
+
+    model.apiHit "1234", 1, 1, 1, ( err, limits ) =>
+      model.qpCheck "1234", "qpd", ( err, limitUsed, ttl ) =>
+        @ok not err
+        @equal limitUsed, 1
+        @equal ttl, 60*60*24
+
+        done 3
+
+  "test qpCheck returns 0, 0 when limit unused": ( done ) ->
+    model = @app.model "apilimits"
+
+    # we need to stub the keys because there's a chance we'll tick
+    # over to the next second/day
+    qpsKeyStub = @getStub ApiLimits::, "qpsKey", -> "qpsTestKey"
+    qpmKeyStub = @getStub ApiLimits::, "qpmKey", -> "qpmTestKey"
+    qpdKeyStub = @getStub ApiLimits::, "qpdKey", -> "qpdTestKey"
+
+    model.qpCheck "1234", "qpd", ( err, limitUsed, ttl ) =>
+      @ok not err
+      @equal limitUsed, 0
+      @equal ttl, 0
+
+      done 3
