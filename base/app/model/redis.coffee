@@ -32,6 +32,9 @@ class Redis
 
       # merge the new and old details
       merged_data = _.extend results[id].data, details
+      # delete any properties that got set to null
+      merged_data = _.omit merged_data, (value) ->
+        return value == null
 
       @create id, merged_data, ( err ) =>
         return cb err if err
