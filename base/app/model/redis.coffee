@@ -56,9 +56,8 @@ class Redis
 
       @validate details, ( err, instance ) =>
         return cb new ValidationError err.message if err
-
         # need to escape the key so that people don't use colons and
-        # trick redis into overwrting other keys
+        # trick redis into overwriting other keys
         id = @escapeId id
 
         multi = @multi()
@@ -67,6 +66,8 @@ class Redis
         if update
           instance.updatedAt = Date.now()
           instance.createdAt = results[id].data.createdAt
+          # delete key to allow for property removal
+          multi.del id
         else
           instance.createdAt = Date.now()
 
