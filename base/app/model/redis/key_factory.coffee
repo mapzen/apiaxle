@@ -71,15 +71,12 @@ class exports.KeyFactory extends Redis
         docs: "A shared secret which is used when signing a call to the api."
       qpd:
         type: "integer"
-        default: 172800
         docs: "Number of queries that can be called per day. Set to `-1` for no limit."
       qpm:
         type: "integer"
-        default: -1
         docs: "Number of queries that can be called per minute. Set to `-1` for no limit."
       qps:
         type: "integer"
-        default: 2
         docs: "Number of queries that can be called per second. Set to `-1` for no limit."
       forApis:
         optional: true
@@ -89,6 +86,10 @@ class exports.KeyFactory extends Redis
         type: "boolean"
         default: false
         docs: "Disable this API causing errors when it's hit."
+      apiLimits:
+        type: "string"
+        docs: "Api specific limits. JSON encoded hash. {api_name: {qpd:5, qps:2, etc}}"
+        optional: true
 
   _verifyApisExist: ( apis, cb ) ->
     allKeyExistsChecks = []
