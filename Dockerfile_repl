@@ -1,0 +1,10 @@
+FROM mhart/alpine-node:4
+RUN npm install -g coffee-script twerp
+RUN apk add --update alpine-sdk python python-dev
+WORKDIR /apiaxle/repl
+ADD base /apiaxle/base
+ADD api /apiaxle/api
+ADD repl /apiaxle/repl
+RUN cd /app/repl && npm install libxmljs && make link && npm install && make clean && make
+RUN apk del --purge alpine-sdk python python-dev
+ENTRYPOINT cd /app/repl && NODE_ENV=production node apiaxle.js

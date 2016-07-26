@@ -1,0 +1,56 @@
+version: '2'
+services:
+  api:
+    ports:
+      - 3100:3100
+    build:
+      context: .
+      dockerfile: Dockerfile_api
+    volumes:
+      - ./api/app:/apiaxle/api/app
+      - ./api/lib:/apiaxle/api/lib
+    volumes_from:
+      - base
+    depends_on:
+      - redis
+      - base
+
+  proxy:
+    ports:
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: Dockerfile_proxy
+    volumes:
+      - ./proxy/app:/apiaxle/proxy/app
+      - ./proxy/lib:/apiaxle/proxy/lib
+    volumes_from:
+      - base
+    depends_on:
+      - redis
+      - base
+
+  repl:
+    build:
+      context: .
+      dockerfile: Dockerfile_repl
+    volumes:
+      - ./repl/lib:/apiaxle/repl/lib
+    volumes_from:
+      - base
+      - api
+    depends_on:
+      - api
+      - base
+      - redis
+
+  base:
+    build: base
+    volumes:
+    - ./base/app:/apiaxle/base/app
+    - ./base/lib:/apiaxle/base/lib
+
+  redis:
+    image: redis
+    ports:
+      - "6379"

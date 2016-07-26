@@ -1,0 +1,15 @@
+{
+  "redis": {
+    "host": "redis",
+    "port": 6379
+  },
+  "application": {
+    "debug": true
+  },
+  "logging": {
+    "level": "DEBUG",
+    "appenders": [{
+      "type": "console"
+    }]
+  }
+}

@@ -1,0 +1,9 @@
+FROM mhart/alpine-node:4
+RUN npm install -g coffee-script twerp supervisor
+RUN apk add --update alpine-sdk python python-dev
+WORKDIR /apiaxle/proxy
+ADD base /apiaxle/base
+ADD proxy /apiaxle/proxy
+RUN npm install libxmljs && make link && npm install && make clean && make
+RUN apk del --purge alpine-sdk python python-dev
+CMD NODE_ENV=production supervisor --force-watch -x coffee -w "lib,app,/apiaxle/base/lib,/apiaxle/base/app" -- ./apiaxle-proxy.coffee -h 0.0.0.0 -p 3000 -f 1
