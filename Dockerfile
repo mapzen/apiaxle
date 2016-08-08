@@ -27,4 +27,5 @@ RUN ln -s /app/node_modules /app/apiaxle/repl/node_modules
 RUN cd /app/apiaxle/repl && npm link /app/apiaxle/api && npm install
 
 RUN apk del --purge alpine-sdk python python-dev
+RUN apk add --update make
 ENTRYPOINT ["/app/apiaxle/docker-entrypoint.sh"]

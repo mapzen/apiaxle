@@ -12,8 +12,11 @@ fi
 
 if [ $app = 'repl' ]; then
   coffee --watch --compile /app/apiaxle/base/index.coffee /app/apiaxle/base/app/ /app/apiaxle/base/lib/ &
-  cd /app/apiaxle/api
+  cd /app/apiaxle/repl
   exec env NODE_ENV=production coffee /app/apiaxle/repl/apiaxle.coffee
+elif [ $app = 'test' ]; then
+  cd /app/apiaxle
+  exec make test
 else
   coffee --watch --compile /app/apiaxle/base/index.coffee /app/apiaxle/base/app/ /app/apiaxle/base/lib/ &
   cd /app/apiaxle/$app
