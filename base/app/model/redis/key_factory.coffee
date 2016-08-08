@@ -78,6 +78,10 @@ class exports.KeyFactory extends Redis
       qps:
         type: "integer"
         docs: "Number of queries that can be called per second. Set to `-1` for no limit."
+      allApis:
+        options: true
+        type: "boolean"
+        docs: "Allow this key to work with all apis."
       forApis:
         optional: true
         type: "array"
