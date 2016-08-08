@@ -1,6 +1,8 @@
 machine:
   node:
     version: 0.10.37
+  hosts:
+    redis: 127.0.0.1
   services:
     - redis
 
