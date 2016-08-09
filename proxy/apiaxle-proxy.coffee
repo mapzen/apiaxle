@@ -303,7 +303,8 @@ class exports.ApiaxleProxy extends AxleApp
     else
       # use key's api specific limits if they exist
       if key.data.apiLimits
-        keyApiLimits = JSON.parse key.data.apiLimits
+        try
+          keyApiLimits = JSON.parse key.data.apiLimits
       if keyApiLimits && keyApiLimits[api.id] != undefined
         qps = keyApiLimits[api.id].qps
         qpm = keyApiLimits[api.id].qpm

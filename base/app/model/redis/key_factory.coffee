@@ -79,7 +79,7 @@ class exports.KeyFactory extends Redis
         type: "integer"
         docs: "Number of queries that can be called per second. Set to `-1` for no limit."
       allApis:
-        options: true
+        optional: true
         type: "boolean"
         docs: "Allow this key to work with all apis."
       forApis:
@@ -92,15 +92,17 @@ class exports.KeyFactory extends Redis
         docs: "Disable this API causing errors when it's hit."
       apiLimits:
         type: "string"
-        docs: "Api specific limits. JSON encoded hash. {api_name: {qpd:5, qps:2, etc}}"
+        docs: 'Api specific limits. {"api1": {"qpd":5, "qps":2}, "api2": {"qpd":2}}'
         optional: true
 
   _verifyApisExist: ( apis, cb ) ->
-    allKeyExistsChecks = []
+    if not apis
+      return cb null
+    allApiExistsChecks = []
 
     for api in apis
       do( api ) =>
-        allKeyExistsChecks.push ( cb ) =>
+        allApiExistsChecks.push ( cb ) =>
           @app.model( "apifactory" ).find [ api ], ( err, results ) ->
             return cb err if err
 
@@ -109,7 +111,33 @@ class exports.KeyFactory extends Redis
 
             return cb null, results[api]
 
-    async.parallel allKeyExistsChecks, cb
+    async.parallel allApiExistsChecks, cb
+
+  _verifyApiLimits: ( apiLimits, cb ) ->
+    if not apiLimits
+      return cb null
+    allApiExistsChecks = []
+
+    for api, limits of apiLimits
+      for limit of limits
+
+        if limit not in ['qpd','qpm','qps']
+          return cb new ValidationError "Unsupported limit type '#{ limit }'"
+
+        if typeof limits[limit] != 'number' || Math.round(limits[limit]) != limits[limit]
+          return cb new ValidationError "apiLimits['#{ api }']['#{ limit }'] must be an integer"
+
+      do( api ) =>
+        allApiExistsChecks.push ( cb ) =>
+          @app.model( "apifactory" ).find [ api ], ( err, results ) ->
+            return cb err if err
+
+            if not results[api]
+              return cb new ValidationError "API '#{ api }' doesn't exist."
+
+            return cb null
+
+    async.parallel allApiExistsChecks, cb
 
   _linkKeyToApis: ( dbApis, dbKey, cb ) ->
     allKeysLink = []
@@ -124,25 +152,32 @@ class exports.KeyFactory extends Redis
     async.parallel allKeysLink, cb
 
   create: ( id, details, cb ) ->
-    # if there isn't a forApis field then `super` will take care of
-    # that
-    if not details?.forApis?
+    # if there isn't a forApis or apiLimits field then let `super` create
+    if not (details?.forApis? || details?.apiLimits?)
       return super
 
-    # grab the apis this should belong to and then delete the key pair
-    # because we don't actually want to store it.
-    forApis = details.forApis
-    delete details.forApis
-
-    # first we need to make sure all of the keys actually
-    # exist. #create should behave atomically if possible
-    @_verifyApisExist forApis, ( err, dbApis ) =>
+    @_verifyApiLimits details.apiLimits, ( err ) =>
       return cb err if err
+      if details.apiLimits
+        # stringify the apiLimits object so it stores correctly in redis
+        details.apiLimits = JSON.stringify(details.apiLimits)
 
-      # this creates the actual key
-      @callConstructor id, details, ( err, dbKey ) =>
+      if details.forApis
+        # grab the apis this should belong to and then delete the key pair
+        # because we don't actually want to store it.
+        forApis = details.forApis
+        delete details.forApis
+
+      # first we need to make sure all of the apis actually
+      # exist. #create should behave atomically if possible
+      @_verifyApisExist forApis, ( err, dbApis ) =>
         return cb err if err
 
-        @_linkKeyToApis dbApis, dbKey, ( err ) =>
+        # this creates the actual key
+        @callConstructor id, details, ( err, dbKey ) =>
           return cb err if err
-          return cb null, dbKey
+          if not dbApis
+            return cb null, dbKey
+          @_linkKeyToApis dbApis, dbKey, ( err ) =>
+            return cb err if err
+            return cb null, dbKey
