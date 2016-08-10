@@ -1,6 +1,12 @@
 changelog
 =========
 
+1.13.00
+-------
+cascading limits
+key apiLimits
+key allApis flag
+
 1.12.38
 -------
 error message customization

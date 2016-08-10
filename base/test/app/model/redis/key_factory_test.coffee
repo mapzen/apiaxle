@@ -183,16 +183,17 @@ class exports.KeyApiLinkTest extends FakeAppTest
         a: endPoint: "example.com"
       key:
         testkey:
-          apiLimits: {"a": {"qpd":5}}
+          apiLimits: '{"a":{"qpd":5}}'
 
     @fixtures.create fixture, ( err, [ a, testkey ] ) =>
+      console.log err
       @ok not err
-      @equal testkey.data.apiLimits, JSON.stringify({"a": {"qpd":5}})
+      @equal testkey.data.apiLimits, JSON.stringify({"a":{"qpd":5}})
       done 2
 
   "test #create with apiLimits with invalid api": ( done ) ->
     createObj =
-      apiLimits: {"a": {"qpd":5}}
+      apiLimits: '{"a": {"qpd":5}}'
 
     @fixtures.createKey "testkey", createObj, ( err ) =>
       @ok err
@@ -206,7 +207,7 @@ class exports.KeyApiLinkTest extends FakeAppTest
         a: endPoint: "example.com"
       key:
         testkey:
-          apiLimits: {"a": {"qpz":5}}
+          apiLimits: '{"a":{"qpz":5}}'
 
     @fixtures.create fixture, ( err ) =>
       @ok err
@@ -220,7 +221,7 @@ class exports.KeyApiLinkTest extends FakeAppTest
         a: endPoint: "example.com"
       key:
         testkey:
-          apiLimits: {"a": {"qpd":5.5}}
+          apiLimits: '{"a":{"qpd":5.5}}'
 
     @fixtures.create fixture, ( err ) =>
       @ok err
@@ -234,7 +235,7 @@ class exports.KeyApiLinkTest extends FakeAppTest
         a: endPoint: "example.com"
       key:
         testkey:
-          apiLimits: {"a": {"qpd":"5"}}
+          apiLimits: '{"a":{"qpd":"5"}}'
 
     @fixtures.create fixture, ( err ) =>
       @ok err

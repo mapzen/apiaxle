@@ -92,7 +92,7 @@ class exports.KeyFactory extends Redis
         docs: "Disable this API causing errors when it's hit."
       apiLimits:
         type: "string"
-        docs: 'Api specific limits. {"api1": {"qpd":5, "qps":2}, "api2": {"qpd":2}}'
+        docs: 'Api specific limits. JSON encoded: \'{"api1": {"qpd":5, "qps":2}, "api2": {"qpd":2}}\''
         optional: true
 
   _verifyApisExist: ( apis, cb ) ->
@@ -116,9 +116,13 @@ class exports.KeyFactory extends Redis
   _verifyApiLimits: ( apiLimits, cb ) ->
     if not apiLimits
       return cb null
+    try
+      parsedLimits = JSON.parse apiLimits
+    catch
+      return cb new ValidationError "apiLimits is invalid JSON"
     allApiExistsChecks = []
 
-    for api, limits of apiLimits
+    for api, limits of parsedLimits
       for limit of limits
 
         if limit not in ['qpd','qpm','qps']
@@ -158,9 +162,6 @@ class exports.KeyFactory extends Redis
 
     @_verifyApiLimits details.apiLimits, ( err ) =>
       return cb err if err
-      if details.apiLimits
-        # stringify the apiLimits object so it stores correctly in redis
-        details.apiLimits = JSON.stringify(details.apiLimits)
 
       if details.forApis
         # grab the apis this should belong to and then delete the key pair
