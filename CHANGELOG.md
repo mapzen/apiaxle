@@ -1,6 +1,11 @@
 changelog
 =========
 
+1.13.00
+-------
+cascading limits
+api groups
+
 1.12.38
 -------
 error message customization
