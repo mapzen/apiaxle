@@ -176,3 +176,97 @@ class exports.KeyApiLinkTest extends FakeAppTest
           @ok "phil" not in key_list
 
           done 4
+
+  "test #create with groupLimits": ( done ) ->
+    fixture =
+      api:
+        a:
+          endPoint: "example.com"
+          group: "testgroup"
+      key:
+        testkey:
+          groupLimits: '{"a":{"qpd":5}}'
+          group: "testgroup"
+
+    @fixtures.create fixture, ( err, [ a, testkey ] ) =>
+      @ok not err
+      @equal testkey.data.groupLimits, JSON.stringify({"a":{"qpd":5}})
+      done 2
+
+  "test #create with groupLimits with invalid api": ( done ) ->
+    createObj =
+      groupLimits: '{"a": {"qpd":5}}'
+      group: "testgroup"
+
+    @fixtures.createKey "testkey", createObj, ( err ) =>
+      @ok err
+      @equal err.message, "API 'a' doesn't exist."
+
+      done 2
+
+  "test #create with groupLimits with api with wrong group": ( done ) ->
+    fixture =
+      api:
+        a:
+          endPoint: "example.com"
+          group: "testgroup1"
+      key:
+        testkey:
+          groupLimits: '{"a":{"qpd":5}}'
+          group: "testgroup2"
+
+    @fixtures.create fixture, ( err, [ a, testkey ] ) =>
+      @ok err
+      @equal err.message, "API 'a' isn't part of group 'testgroup2'."
+      done 2
+
+  "test #create with groupLimits with invalid limit type": ( done ) ->
+    fixture =
+      api:
+        a:
+          endPoint: "example.com"
+          group: "testgroup"
+      key:
+        testkey:
+          groupLimits: '{"a":{"qpz":5}}'
+          group: "testgroup"
+
+    @fixtures.create fixture, ( err ) =>
+      @ok err
+      @equal err.message, "Unsupported limit type 'qpz'"
+
+      done 2
+
+  "test #create with groupLimits with float limit": ( done ) ->
+    fixture =
+      api:
+        a:
+          endPoint: "example.com"
+          group: "testgroup"
+      key:
+        testkey:
+          groupLimits: '{"a":{"qpd":5.5}}'
+          group: "testgroup"
+
+    @fixtures.create fixture, ( err ) =>
+      @ok err
+      @equal err.message, "groupLimits['a']['qpd'] must be an integer"
+
+      done 2
+
+  "test #create with groupLimits with string limit": ( done ) ->
+    fixture =
+      api:
+        a:
+          endPoint: "example.com"
+          group: "testgroup"
+      key:
+        testkey:
+          groupLimits: '{"a":{"qpd":"5"}}'
+          group: "testgroup"
+
+    @fixtures.create fixture, ( err ) =>
+      @ok err
+      @equal err.message, "groupLimits['a']['qpd'] must be an integer"
+
+      done 2
