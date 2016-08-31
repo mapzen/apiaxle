@@ -1,0 +1,30 @@
+machine:
+  node:
+    version: 0.10.37
+  hosts:
+    redis: 127.0.0.1
+  services:
+    - redis
+
+dependencies:
+  cache_directories:
+    - base/node_modules
+    - api/node_modules
+    - proxy/node_modules
+    - repl/node_modules
+  override:
+    - npm install -g coffee-script twerp
+    - make link
+    - make npminstall
+    - make package
+
+test:
+  override:
+    - make test:
+        timeout: 120
+
+deployment:
+  release:
+    tag: /\d+\.\d+\.\d+/
+    commands:
+      - ./deploy.sh

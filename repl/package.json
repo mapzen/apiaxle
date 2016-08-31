@@ -22,9 +22,9 @@
   "dependencies": {
     "lodash": "~1.2.0",
     "tokenizer": "~0.1.2",
-    "apiaxle-base": "1.13.1",
+    "apiaxle-base": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-base-1.13.1.tgz",
     "libxmljs": "0.14.x",
-    "apiaxle-api": "1.13.1",
+    "apiaxle-api": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-api-1.13.1.tgz",
     "sinon": "~1.6.0",
     "twerp": "~1.0.7",
     "stdin": "0.0.1",

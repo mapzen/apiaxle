@@ -16,7 +16,7 @@
     "apiaxle-proxy-event-subscriber": "./apiaxle-proxy-event-subscriber.js"
   },
   "dependencies": {
-    "apiaxle-base": "1.13.1",
+    "apiaxle-base": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-base-1.13.1.tgz",
     "libxmljs": "0.14.x",
     "lodash": "~2.2.1",
     "sinon": "~1.6.0",
