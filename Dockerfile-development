@@ -16,6 +16,7 @@ COPY ./Makefile /app/apiaxle/
 COPY ./apiaxle-config.json /apiaxle-config.json
 COPY ./docker-entrypoint.sh /app/apiaxle/
 COPY ./build-apiaxle.sh /app/build-apiaxle.sh
+COPY ./README.md /app/apiaxle/README.md
 
 RUN /app/build-apiaxle.sh
 
