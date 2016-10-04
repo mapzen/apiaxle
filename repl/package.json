@@ -20,8 +20,8 @@
     "apiaxle": "./apiaxle.js"
   },
   "dependencies": {
-    "apiaxle-base": "1.14.1",
-    "apiaxle-api": "1.14.1",
+    "apiaxle-base": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-base-1.14.1.tgz",
+    "apiaxle-api": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-api-1.14.1.tgz",
     "lodash": "~1.2.0",
     "tokenizer": "~0.1.2",
     "libxmljs": "0.14.x",
