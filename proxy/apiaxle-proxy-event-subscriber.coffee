@@ -27,7 +27,8 @@ class exports.ApiaxleQueueProcessor extends AxleApp
       return processor.processHit.bind(processor) )
     if @config.hit_processors.length > 0
       @logger.debug("Loaded #{@config.hit_processors.length} external processors")
-    @hitProcessors.push(@processHit.bind(this));
+    if @config.enable_builtin_stats
+      @hitProcessors.push(@processHit.bind(this));
     return cb null
 
   processHit: ( options, cb ) ->

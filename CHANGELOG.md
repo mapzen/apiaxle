@@ -1,6 +1,10 @@
 changelog
 =========
 
+1.14.2
+------
+- allow disabling of proxy-event-subscriber's builtin stats
+
 1.14.1
 ------
 - keyless updates

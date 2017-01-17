@@ -164,6 +164,9 @@ class exports.AxleApp extends Application
       type: "object"
       additionalProperties: false
       properties:
+        enable_builtin_stats:
+          type: "boolean"
+          default: true
         hit_processors:
           type: "array"
           items:
