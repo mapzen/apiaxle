@@ -1,6 +1,11 @@
 changelog
 =========
 
+1.14.3
+------
+- support nodejs 6
+- bump libxmjs version
+
 1.14.2
 ------
 - allow disabling of proxy-event-subscriber's builtin stats
