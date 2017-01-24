@@ -5,6 +5,7 @@ changelog
 ------
 - support nodejs 6
 - bump libxmjs version
+- bump redis version
 
 1.14.2
 ------
