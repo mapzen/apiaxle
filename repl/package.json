@@ -12,7 +12,7 @@
   ],
   "description": "ApiAxle's commandline interface.",
   "bugs": "https://github.com/apiaxle/apiaxle/issues",
-  "version": "1.14.3",
+  "version": "1.14.4",
   "scripts": {
     "test": "cake test"
   },
@@ -20,8 +20,8 @@
     "apiaxle": "./apiaxle.js"
   },
   "dependencies": {
-    "apiaxle-base": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-base-1.14.3.tgz",
-    "apiaxle-api": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-api-1.14.3.tgz",
+    "apiaxle-base": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-base-1.14.4.tgz",
+    "apiaxle-api": "http://s3.amazonaws.com/mapzen.software/apiaxle/apiaxle-api-1.14.4.tgz",
     "lodash": "~1.2.0",
     "tokenizer": "~0.1.2",
     "libxmljs": "0.18.x",

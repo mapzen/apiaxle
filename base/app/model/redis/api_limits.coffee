@@ -2,7 +2,7 @@
 # Copyright 2011-2013 Philip Jackson.
 async = require "async"
 
-{ QpsExceededError, QpmExceededError, QpdExceededError } = require "../../../lib/error"
+{ QpsExceededError, QpmExceededError, QpdExceededError, CutoffError } = require "../../../lib/error"
 { Redis } = require "../redis"
 
 class exports.ApiLimits extends Redis
@@ -23,6 +23,9 @@ class exports.ApiLimits extends Redis
   qpdKey: ( key, api ) ->
     return [ "qpd", @dayString(), api, key ]
 
+  cutoffKey: ( key, api ) ->
+    return [ "cutoff", api, key ]
+
   setInitialQp: ( key, expires, qp, cb ) ->
     @setex key, expires, qp, ( err ) =>
       return cb err if err
@@ -30,6 +33,8 @@ class exports.ApiLimits extends Redis
 
   apiHit: ( key, api, qpsLimit, qpmLimit, qpdLimit, cb ) ->
     all = []
+
+    all.push ( innerCb ) => @checkCutoff key, api, innerCb
 
     if qpdLimit? and qpdLimit > 0
       all.push ( innerCb ) => @qpdHit key, api, qpdLimit, innerCb
@@ -47,6 +52,12 @@ class exports.ApiLimits extends Redis
       all.push ( innerCb ) -> innerCb null, -1
 
     async.series all, cb
+
+  checkCutoff: ( key, api, cb ) ->
+    @get @cutoffKey( key, api ), ( err, cutoff ) =>
+      return cb err if err
+      return cb new CutoffError if cutoff
+      return cb null, cutoff
 
   qpdHit: ( key, api, qpdLimit, cb ) ->
     qpdKey = @qpdKey( key, api )

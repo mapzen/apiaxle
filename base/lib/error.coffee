@@ -39,5 +39,12 @@ class exports.QpdExceededError extends exports.AppError
     super
     @message = "Queries per day exceeded: #{ msg }"
 
+class exports.CutoffError extends exports.AppError
+  @status = 429
+
+  constructor: ( @options ) ->
+    super
+    @message = "Budget cap exceeded."
+
 class exports.RedisError extends exports.AppError
   @status = 500

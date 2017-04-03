@@ -1,6 +1,10 @@
 changelog
 =========
 
+1.14.4
+------
+- add service/key cutoffs
+
 1.14.3
 ------
 - support nodejs 6

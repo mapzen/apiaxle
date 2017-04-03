@@ -343,7 +343,7 @@ class exports.ApiaxleProxy extends AxleApp
     { qpd, qpm, qps } = @chooseLimits( req.key, req.api )
     args = [ req.key.id, req.api_name, qps, qpm, qpd ]
 
-    @model( "apilimits" ).apiHit args..., ( err, [ newQpd, newQpm, newQps ] ) ->
+    @model( "apilimits" ).apiHit args..., ( err, [ _cutoff, newQpd, newQpm, newQps ] ) ->
       return next err if err
 
       # let the user know what they have left
