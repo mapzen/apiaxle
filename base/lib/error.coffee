@@ -44,7 +44,7 @@ class exports.CutoffError extends exports.AppError
 
   constructor: ( @options ) ->
     super
-    @message = "Budget cap exceeded."
+    @message = "Monthly usage exceeded."
 
 class exports.RedisError extends exports.AppError
   @status = 500
