@@ -10,15 +10,13 @@
   ],
   "description": "Shared core functionality for apiaxle.",
   "bugs": "https://github.com/apiaxle/apiaxle/issues",
-  "version": "1.14.5",
+  "version": "1.15.0",
   "main": "index",
   "scripts": {
     "test": "make test"
   },
   "dependencies": {
     "lodash": "~1.2.0",
-    "js2xml": "philjackson/js2xml",
-    "libxmljs": "0.18.x",
     "date-utils": "~1.2.13",
     "scarf": "0.0.10",
     "request": "~2.20.0",

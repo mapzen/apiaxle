@@ -1,7 +1,6 @@
 # This code is covered by the GPL version 3.
 # Copyright 2011-2013 Philip Jackson.
 _ = require "lodash"
-libxml = require "libxmljs"
 http = require "http"
 
 class AppResponse
@@ -17,14 +16,6 @@ class AppResponse
       jq = require( "jquery" ).create win
 
       cb jq
-
-  parseXml: ( cb ) ->
-    try
-      output = libxml.parseXmlString @data
-    catch err
-      return cb err, null
-
-    return cb null, output
 
   _isError: ( meta ) ->
     return meta.status_code < 200 or meta.status_code >= 400

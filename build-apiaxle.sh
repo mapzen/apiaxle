@@ -4,22 +4,12 @@ BASEDIR=`pwd`
 
 make clean && make && \
 
-cd $BASEDIR/base && npm install && \
-ln -s $BASEDIR/base node_modules/apiaxle-base && \
+cd $BASEDIR/base && npm install && npm link && \
 
-mv node_modules $BASEDIR/api/ && \
-cd $BASEDIR/api && \
-npm install && \
-ln -s $BASEDIR/api node_modules/apiaxle-api && \
+cd $BASEDIR/api && npm link apiaxle-base && npm install && npm link && \
 
-mv node_modules $BASEDIR/proxy/ && \
-cd $BASEDIR/proxy && \
-npm install && \
+cd $BASEDIR/proxy && npm link apiaxle-base && npm install && \
 
-mv node_modules $BASEDIR/repl/ && \
-cd $BASEDIR/repl && \
-npm install && \
+cd $BASEDIR/repl && npm link apiaxle-base && npm link apiaxle-api && npm install && \
 echo "#!/usr/bin/env node" > apiaxle && cat ./apiaxle.js >> apiaxle && \
-chmod a+x apiaxle && mv apiaxle $BASEDIR/ && \
-
-mv node_modules $BASEDIR/
+chmod a+x apiaxle && mv apiaxle $BASEDIR/

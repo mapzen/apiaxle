@@ -6,7 +6,6 @@ http   = require "http"
 path   = require "path"
 sinon  = require "sinon"
 async  = require "async"
-libxml = require "libxmljs"
 _      = require "lodash"
 
 { Application } = require "./application"

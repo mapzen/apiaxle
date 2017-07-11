@@ -78,7 +78,7 @@ class exports.ApiFactory extends Redis
         docs: "The amount of seconds you allow a valid token to be calculated against, either side of the current second. The higher the number the greater the computational cost."
       apiFormat:
         type: "string"
-        enum: [ "json", "xml" ]
+        enum: [ "json" ]
         default: "json"
         docs: "The resulting data type of the endpoint. This is redundant at the moment but will eventually support both XML too."
       endPointTimeout:

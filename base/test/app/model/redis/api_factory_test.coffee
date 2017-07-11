@@ -73,7 +73,7 @@ class exports.ApiTest extends FakeAppTest
 
   "test #create with an invalid regex": ( done ) ->
     newObj =
-      apiFormat: "xml"
+      apiFormat: "json"
       endPoint: "api.twitter.com"
       extractKeyRegex: "hello( "
 
@@ -85,7 +85,7 @@ class exports.ApiTest extends FakeAppTest
 
   "test #create with good structure": ( done ) ->
     newObj =
-      apiFormat: "xml"
+      apiFormat: "json"
       endPoint: "api.twitter.com"
 
     @fixtures.createApi "twitter", newObj, ( err ) =>
@@ -94,7 +94,7 @@ class exports.ApiTest extends FakeAppTest
       @model.find [ "twitter" ], ( err, results ) =>
         @ok not err
 
-        @equal results.twitter.data.apiFormat, "xml"
+        @equal results.twitter.data.apiFormat, "json"
         @ok results.twitter.data.createdAt
 
         done 4

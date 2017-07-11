@@ -9,7 +9,6 @@ Redis = require "redis"
 
 Redis = require "redis"
 
-{ Js2Xml } = require "js2xml"
 { Application } = require "scarf"
 { NotFoundError } = require "./error"
 
@@ -192,19 +191,6 @@ class exports.AxleApp extends Application
   model: ( name ) ->
     return @plugins.models[name]
 
-  getErrorFormat: ( req ) ->
-    if query = req.parsed_url?.query
-      if query and query.format and query.format in [ "xml", "json" ]
-        return query.format
-
-    if /application\/xml/.test(req.headers.accept)
-      return "xml"
-
-    if req.api?.data.apiFormat is "xml"
-      return "xml"
-
-    return "json"
-
   # because the proxy doesn't use express we can't use nice things
   # like res.json here.
   error: ( err, req, res ) ->
@@ -222,20 +208,14 @@ class exports.AxleApp extends Application
 
     status = err.constructor.status or 400
 
-    if @getErrorFormat( req ) is "json"
-      meta =
-        version: 1
-        status_code: status
+    meta =
+      version: 1
+      status_code: status
 
-      res.writeHead status, { "Content-Type": "application/json" }
-      return res.end JSON.stringify
-        meta: meta
-        results: output
-
-    # need xml
-    res.writeHead status, { "Content-Type": "application/xml" }
-    js2xml = new Js2Xml "error", output.error
-    return res.end js2xml.toString()
+    res.writeHead status, { "Content-Type": "application/json" }
+    return res.end JSON.stringify
+      meta: meta
+      results: output
 
   # this will come from an express app
   onError: ( err, req, res, next ) ->

@@ -3,7 +3,6 @@
 _ = require "lodash"
 url    = require "url"
 async  = require "async"
-libxml = require "libxmljs"
 nock = require "nock"
 
 { ApiaxleTest } = require "../../apiaxle"

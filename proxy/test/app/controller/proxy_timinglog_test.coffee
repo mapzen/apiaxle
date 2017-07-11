@@ -4,7 +4,6 @@ _ = require "lodash"
 url    = require "url"
 nock = require "nock"
 async  = require "async"
-libxml = require "libxmljs"
 
 { RedisMulti } = require "../../../../base/app/model/redis"
 { ApiaxleTest } = require "../../apiaxle"

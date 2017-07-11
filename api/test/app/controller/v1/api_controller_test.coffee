@@ -272,7 +272,7 @@ class exports.ApiControllerTest extends ApiaxleTest
       headers:
         "Content-Type": "application/json"
       data: JSON.stringify
-        apiFormat: "xml"
+        apiFormat: "json"
 
     @fixtures.createApi "1234", endPoint: "hi.com", ( err, origApi ) =>
       @ok not err
@@ -285,12 +285,12 @@ class exports.ApiControllerTest extends ApiaxleTest
         res.parseJson ( err, json ) =>
           @ok not err
 
-          @equal json.results.new.apiFormat, "xml"
+          @equal json.results.new.apiFormat, "json"
           @equal json.results.old.apiFormat, "json"
 
           @app.model( "apifactory" ).find [ "1234" ], ( err, results ) =>
             @equal results["1234"].data.endPoint, "hi.com"
-            @equal results["1234"].data.apiFormat, "xml"
+            @equal results["1234"].data.apiFormat, "json"
 
             done 9
 

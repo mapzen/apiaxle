@@ -1,6 +1,10 @@
 changelog
 =========
 
+1.15.0
+------
+- remove xml support
+
 1.14.5
 ------
 - update service/key cutoff message
