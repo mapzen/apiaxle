@@ -212,7 +212,10 @@ class exports.AxleApp extends Application
       version: 1
       status_code: status
 
-    res.writeHead status, { "Content-Type": "application/json" }
+    if res.headersSent
+      console.log "Headers already sent. " + response.statusCode + " " + JSON.stringify(output)
+    else
+      res.writeHead status, { "Content-Type": "application/json" }
     return res.end JSON.stringify
       meta: meta
       results: output

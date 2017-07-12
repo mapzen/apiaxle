@@ -4,6 +4,7 @@ changelog
 1.15.0
 ------
 - remove xml support
+- guard against sending error headers twice
 
 1.14.5
 ------
